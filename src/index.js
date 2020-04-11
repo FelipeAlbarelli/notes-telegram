@@ -6,8 +6,8 @@ const userRouter = require('./routers/users')
 const botgram = require('botgram')
 const User = require('./models/users')
 const Notes = require('./models/notes')
+const botKey = require('./keys');
 
-const botKey = '1171005669:AAG8ZoHGwA4FPIl2JgELKIm0G3ODyuzwahI'
 const bot    = botgram(botKey)
 
 bot.command('start' , async (msg , reply , next) => {
@@ -32,7 +32,6 @@ bot.command('start' , async (msg , reply , next) => {
 bot.text( (msg , reply , next) =>{
     reply.text('oie')
 })
-
 
 bot.command('add' , async (msg , reply , next) => {
     const {content , tag} = Notes.getObjFromCommand(msg.args());

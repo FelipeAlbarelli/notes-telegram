@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 
 const notesSchema = new mongoose.Schema({
     content : {
-        type : String
-        // required : true,
+        type : String,
+        required : true,
     },
     tag : {
         type : String

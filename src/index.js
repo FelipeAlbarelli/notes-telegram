@@ -10,6 +10,8 @@ const botKey = require('./keys');
 
 const bot    = botgram(botKey)
 
+bot.context({a : 1})
+
 bot.command('start' , async (msg , reply , next) => {
     const {username , id : telegramId , name} = msg.from;
     const findUser = await User.find({telegramId});
@@ -40,7 +42,8 @@ bot.command('add' , async (msg , reply , next) => {
         const note = new Notes({content , tag , owner : user._id});
         await note.save()
     } catch (e) {
-        reply.text(e)
+        const error = content ? 'erro desconhecido, por favor contate o admin' : 'a anotação não pode ser vazia'
+        reply.text(error)
     }
 })
 
@@ -51,11 +54,11 @@ bot.command('list', async (msg, reply, next) => {
         const _id  = user._id;
         const query = tag == '' ? {owner : _id} : {tag , owner : _id};
         const notes = await Notes.find(query);
-        notes.forEach( note => {
-            reply.text(note.content)
-        } )
+        const result = notes.reduce( (acu , atual , i) => acu + '\n' + `${i}) ` + atual.content , '' );
+        reply.text(result)
     } catch (e) {
-        reply.text(e)
+        console.log(e)
+        reply.text('algo errado ocorreu')
     }
 })
 

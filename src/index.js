@@ -10,7 +10,10 @@ const botKey = require('./keys');
 
 const bot    = botgram(botKey)
 
-bot.context({a : 1})
+bot.context({
+    cacheArray : [],
+    confirmed : false
+});
 
 bot.command('start' , async (msg , reply , next) => {
     const {username , id : telegramId , name} = msg.from;
@@ -32,7 +35,7 @@ bot.command('start' , async (msg , reply , next) => {
 })
 
 bot.text( (msg , reply , next) =>{
-    reply.text('oie')
+    console.log(msg.context.cacheArray)
 })
 
 bot.command('add' , async (msg , reply , next) => {
@@ -55,10 +58,26 @@ bot.command('list', async (msg, reply, next) => {
         const query = tag == '' ? {owner : _id} : {tag , owner : _id};
         const notes = await Notes.find(query);
         const result = notes.reduce( (acu , atual , i) => acu + '\n' + `${i}) ` + atual.content , '' );
+        msg.context.cacheArray = notes;
         reply.text(result)
     } catch (e) {
         console.log(e)
         reply.text('algo errado ocorreu')
+    }
+})
+
+bot.command('remove' , async (msg , reply , next) => {
+    const arg = parseInt(msg.args());
+    if (isNaN(arg) || arg < 0 || arg > msg.context.cacheArray.length - 1 ){
+        return reply.text('indice inválido, use /help para saber mais.')
+    }
+    const note = msg.context.cacheArray[arg]
+    console.log(note)
+    try {
+        await Notes.findByIdAndDelete(note._id);
+        reply.text(`anotação ${note.content} removida com sucesso`);
+    } catch (e) {
+
     }
 })
 

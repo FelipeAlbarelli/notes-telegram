@@ -35,7 +35,7 @@ bot.text( (msg , reply , next) =>{
 
 
 bot.command('add' , async (msg , reply , next) => {
-    const {content , tag} = (Notes.getObjFromCommand(msg.text) );
+    const {content , tag} = Notes.getObjFromCommand(msg.args());
     try {
         const user = await User.findOne({telegramId : msg.from.id});
         const note = new Notes({content , tag , owner : user._id});
@@ -46,7 +46,22 @@ bot.command('add' , async (msg , reply , next) => {
 })
 
 bot.command('list', async (msg, reply, next) => {
-    
+    const {tag} = Notes.getObjFromCommand(msg.args());
+    try {
+        const user =  await User.findOne({telegramId : msg.from.id});
+        const _id  = user._id;
+        const query = tag == '' ? {owner : _id} : {tag , owner : _id};
+        const notes = await Notes.find(query);
+        notes.forEach( note => {
+            reply.text(note.content)
+        } )
+    } catch (e) {
+        reply.text(e)
+    }
+})
+
+bot.command('test' , (msg , reply , next) => {
+
 })
 
 app.use(express.json())

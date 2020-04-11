@@ -15,7 +15,7 @@ const notesSchema = new mongoose.Schema({
 
 notesSchema.statics.getObjFromCommand = (command) => {
     const reg = /^#\w*#/;
-    let parsedCommand = command.replace('/add' , '').trim();
+    let parsedCommand = command.trim();
 
     let tag = '';
     let content = ''
